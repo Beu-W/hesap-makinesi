@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPhone Hesap Makinesi</title>
+    <style>
+        body {
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+        }
+
+        .calculator {
+            width: 320px;
+            background-color: #000;
+            padding: 20px;
+            border-radius: 40px;
+        }
+
+        .display {
+            color: white;
+            font-size: 80px;
+            text-align: right;
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            font-weight: 300;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        button {
+            border: none;
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            font-size: 30px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: brightness 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button:active {
+            filter: brightness(1.5);
+        }
+
+        /* Renk Grupları */
+        .btn-gray { background-color: #a5a5a5; color: black; }
+        .btn-dark { background-color: #333333; color: white; }
+        .btn-orange { background-color: #ff9f0a; color: white; }
+
+        /* Özel Tuşlar */
+        .btn-zero {
+            grid-column: span 2;
+            width: 152px;
+            border-radius: 40px;
+            justify-content: flex-start;
+            padding-left: 28px;
+        }
+
+        .active-operator {
+            background-color: white;
+            color: #ff9f0a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator">
+    <div class="display" id="display">0</div>
+    <div class="buttons">
+        <button class="btn-gray" onclick="clearDisplay()">AC</button>
+        <button class="btn-gray" onclick="toggleSign()">+/-</button>
+        <button class="btn-gray" onclick="percentage()">%</button>
+        <button class="btn-orange operator" onclick="setOperator('/')">÷</button>
+        
+        <button class="btn-dark" onclick="appendNumber('7')">7</button>
+        <button class="btn-dark" onclick="appendNumber('8')">8</button>
+        <button class="btn-dark" onclick="appendNumber('9')">9</button>
+        <button class="btn-orange operator" onclick="setOperator('*')">×</button>
+        
+        <button class="btn-dark" onclick="appendNumber('4')">4</button>
+        <button class="btn-dark" onclick="appendNumber('5')">5</button>
+        <button class="btn-dark" onclick="appendNumber('6')">6</button>
+        <button class="btn-orange operator" onclick="setOperator('-')">−</button>
+        
+        <button class="btn-dark" onclick="appendNumber('1')">1</button>
+        <button class="btn-dark" onclick="appendNumber('2')">2</button>
+        <button class="btn-dark" onclick="appendNumber('3')">3</button>
+        <button class="btn-orange operator" onclick="setOperator('+')">+</button>
+        
+        <button class="btn-dark btn-zero" onclick="appendNumber('0')">0</button>
+        <button class="btn-dark" onclick="appendNumber('.')">,</button>
+        <button class="btn-orange" onclick="calculate()">=</button>
+    </div>
+</div>
+
+<script>
+    let currentInput = '0';
+    let previousInput = '';
+    let operator = null;
+    let shouldResetScreen = false;
+
+    const displayElement = document.getElementById('display');
+
+    function updateDisplay() {
+        if (currentInput.length > 6) {
+            displayElement.style.fontSize = '40px';
+        } else {
+            displayElement.style.fontSize = '80px';
+        }
+        displayElement.innerText = currentInput.replace('.', ',');
+    }
+
+    function appendNumber(number) {
+        if (currentInput === '0' || shouldResetScreen) {
+            currentInput = number;
+            shouldResetScreen = false;
+        } else {
+            if (number === '.' && currentInput.includes('.')) return;
+            currentInput += number;
+        }
+        updateDisplay();
+    }
+
+    function clearDisplay() {
+        currentInput = '0';
+        previousInput = '';
+        operator = null;
+        updateDisplay();
+    }
+
+    function setOperator(op) {
+        if (operator !== null) calculate();
+        previousInput = currentInput;
+        operator = op;
+        shouldResetScreen = true;
+    }
+
+    function calculate() {
+        if (operator === null || shouldResetScreen) return;
+        let result;
+        const prev = parseFloat(previousInput);
+        const current = parseFloat(currentInput);
+
+        switch (operator) {
+            case '+': result = prev + current; break;
+            case '-': result = prev - current; break;
+            case '*': result = prev * current; break;
+            case '/': result = prev / current; break;
+            default: return;
+        }
+
+        currentInput = result.toString();
+        operator = null;
+        shouldResetScreen = true;
+        updateDisplay();
+    }
+
+    function toggleSign() {
+        currentInput = (parseFloat(currentInput) * -1).toString();
+        updateDisplay();
+    }
+
+    function percentage() {
+        currentInput = (parseFloat(currentInput) / 100).toString();
+        updateDisplay();
+    }
+</script>
+
+</body>
+</html>
