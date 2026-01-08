@@ -1,4 +1,6 @@
 # Hesap Makinesi
+Ben bilgisayar proglamcılığı 2-A sınıfdan Günay Akdeniz projeyi html üzerinden yapıp.
+Windows tabanlı bir bilgisayardan projryi test edip çalıştırdım.
 
 ## Kullanılan Teknolojiler
 - HTML
